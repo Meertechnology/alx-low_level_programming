@@ -3,53 +3,51 @@
 #include "lists.h"
 
 /**
- * add_node_end - adds a node to the end of a list_t list
+ * add_node_end - Adds a new node at the end of a list_t list.
+ * @head: A double pointer to the head of the list.
+ * @str: The string to be added to the new node.
  *
- * @head: node to add a node after
- * @str: string to put in new node
- *
- * Return: address of new element
+ * Return: The address of the new element, or NULL if it failed.
  */
 list_t *add_node_end(list_t **head, const char *str)
 {
-	char *newstr, *ptr;
-	list_t *newnode, *lastnode = NULL;
-	int len = 0;
+    list_t *new_node;
+    list_t *last;
 
-	if (str != NULL)
-	{
-		ptr = (char *) str;
-		while (*ptr++)
-			len++;
-		newstr = malloc(sizeof(char) * (len + 1));
-		if (newstr == NULL)
-			return (NULL);
+    /* Allocate memory for the new node */
+    new_node = malloc(sizeof(list_t));
+    if (new_node == NULL)
+        return (NULL);
 
-		ptr = newstr;
-		while (*str)
-			*ptr++ = *str++;
-	}
-	else
-		newstr = NULL;
+    /* Duplicate the string */
+    new_node->str = strdup(str);
+    if (new_node->str == NULL)
+    {
+        free(new_node);
+        return (NULL);
+    }
 
-	if (*head != NULL)
-	{
-		lastnode = *head;
-		while (lastnode->next != NULL)
-			lastnode = lastnode->next;
-	}
-	newnode = malloc(sizeof(list_t));
-	if (newnode == NULL)
-	{
-		free(newstr);
-		return (NULL);
-	}
+    /* Set the length of the string and the next pointer to NULL */
+    new_node->len = strlen(str);
+    new_node->next = NULL;
 
-	if (*head == NULL)
-		*head = newnode;
-	if (lastnode != NULL)
-		lastnode->next = newnode;
-	newnode->str = newstr;
-	newnode->len = len;
-	return (newnode);
+    /* If the list is empty, set the new node as the head */
+    if (*head == NULL)
+    {
+        *head = new_node;
+    }
+    else
+    {
+        /* Traverse the list to find the last node */
+        last = *head;
+        while (last->next != NULL)
+        {
+            last = last->next;
+        }
+
+        /* Attach the new node at the end */
+        last->next = new_node;
+    }
+
+    return (new_node);
 }
